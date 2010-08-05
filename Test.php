@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This file contains sample code that illustrates how the SugestioClient object can
+ * be used in a project. Visit the website for tutorials and general API documentation.
+ */
+
 require_once dirname(__FILE__) . '/SugestioClient.php';
 require_once dirname(__FILE__) . '/SugestioUser.php';
 require_once dirname(__FILE__) . '/SugestioItem.php';
