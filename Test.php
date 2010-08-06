@@ -23,7 +23,7 @@ try {
     //$test->testAddUser();
     //$test->testAddItem();
     //$test->testAddConsumption();
-    $test->testGetRecommendations();
+    //$test->testGetRecommendations();
     //$test->testGetSimilar();
     //$test->testDeleteRecommendation();
     //$test->testGetAnalytics();
@@ -170,7 +170,9 @@ class ControllerTest {
     }
 
     public function testAddConsumption() {
-        $result = $this->controller->addConsumption('1', 'abcd', 'RATING', 'THUMB:UP', 'NOW', 'home', '40.446195,-79.948862');
+        
+        $extra = array('phrase' => 'recommended for you', 'algorithm' => 'UserBasedCF');
+        $result = $this->controller->addConsumptionExtra('1', 'abcdef', 'RATING', 'THUMB:UP', 'NOW', 'home', '40.446195,-79.948862', $extra);
         echo "addConsumption response code: $result";
     }
 

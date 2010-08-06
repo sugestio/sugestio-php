@@ -18,6 +18,7 @@ class SugestioConsumption {
     public $location_simple;
     public $location_latlong;
 
+    public $extra;
 
     /**
      * Creates a new Consumption object.
@@ -27,6 +28,7 @@ class SugestioConsumption {
     public function __construct($userid, $itemid) {
         $this->userid = $userid;
         $this->itemid = $itemid;
+        $this->extra = array();
     }
 
     /**
@@ -48,6 +50,10 @@ class SugestioConsumption {
 
         $fields['location_simple'] = $this->location_simple;
         $fields['location_latlong'] = $this->location_latlong;
+
+        foreach ($this->extra as $key => $value) {
+            $fields[$key] = $value;
+        }
 
         return $fields;
     }

@@ -110,7 +110,7 @@ class Controller {
         406 Not Acceptable: Required arguments are missing or malformed
         500 Internal Server Error
     */
-    public function addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong) {
+    public function addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra=array()) {
 
         $c = new SugestioConsumption($userid, $itemid); // userid, itemid
 
@@ -119,12 +119,20 @@ class Controller {
         $c->detail = $detail;
         $c->location_simple = $location_simple;
         $c->location_latlong = $location_latlong;
+        $c->extra = $extra;
 
         $result = $this->client->addConsumption($c);
 
         return $result;
     }
 
+    /*
+     * Extended addConsumption method which allows to pass additional parameters through the
+     * $extra option. This field is expected to be an array
+     */
+    public function addConsumptionExtra($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra) {
+            return $this->addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra);
+    }
 
     /*
         Returns recommendations for the given user. Recommendations consist of an Item ID and a score.

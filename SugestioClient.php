@@ -64,7 +64,7 @@ class SugestioClient {
 
         $method = 'POST';
         $resource = '/consumptions';
-
+        
         $result = $this->execute($method, $resource, $consumption->getFields());
 
         return $result['code'];
