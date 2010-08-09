@@ -16,10 +16,21 @@ class SugestioClient {
     protected $settings;
 
     /**
-     * Create a new instance of the SugestioClient. Gets the account credentials from Settings.php.
+     * Create a new instance of the SugestioClient. Optionally specify $account and $secretkey
+     * to override the values in Settings.php
+     *
+     * @param account the account name (optional)
+     * @param secretkey the secret key (optional)
      */
-    public function __construct() {
+    public function __construct($account=null, $secretkey=null) {
+        
         $this->settings = new Settings();
+
+        if ($account != null)
+            $this->settings->account = $account;
+
+        if ($secretkey != null)
+            $this->settings->secretkey = $secretkey;
     }
 
     /**

@@ -14,12 +14,12 @@ class Settings {
     /**
      *  The account name of the project that wishes to communicate with the webservice
      */
-    public $account = "sandbox";    
+    public $account = 'sandbox';
 
     /**
      * The secret key that will be used to authenticate the communication with the webservice
      */
-    public $secretkey = "demo";    
+    public $secretkey = 'demo';
 
 }
 ?>
