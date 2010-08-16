@@ -21,8 +21,9 @@ class SugestioClient {
      *
      * @param account the account name (optional)
      * @param secretkey the secret key (optional)
+     * @param base_url the base url of the webservice (optional)
      */
-    public function __construct($account=null, $secretkey=null) {
+    public function __construct($account=null, $secretkey=null, $base_url=null) {
         
         $this->settings = new Settings();
 
@@ -31,6 +32,9 @@ class SugestioClient {
 
         if ($secretkey != null)
             $this->settings->secretkey = $secretkey;
+
+        if ($base_url != null)
+            $this->settings->base_url = $base_url;
     }
 
     /**

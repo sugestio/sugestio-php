@@ -19,8 +19,8 @@ class Controller {
      * Creates a new instance of the Controller wrapper.
      * @deprecated
      */
-    public function __construct() {
-        $this->client = new SugestioClient();
+    public function __construct($account=null, $secretkey=null, $base_url=null) {
+        $this->client = new SugestioClient($account, $secretkey, $base_url);
     }
 
 
