@@ -1,8 +1,7 @@
 <?php
 
-/**
- * This class holds the adjustable parameters that are used throughout the project.
- * This is where you enter your account credentials.
+/**  
+ * This is where you enter your access credentials. 
  */
 class Settings {
 
