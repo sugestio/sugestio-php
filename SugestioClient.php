@@ -230,7 +230,7 @@ class SugestioClient {
         $recommendations = array();
 
         if (count($rows) > 0) {
-            $headers = array('itemid', 'score', 'algorithm');
+            $headers = array('itemid', 'score', 'algorithm', 'certainty');
             $recommendations = $this->parseCsv($headers, $rows, 0, count($rows)-1);
         }
 
@@ -248,7 +248,7 @@ class SugestioClient {
             $record = array();
 
             for ($j=0; $j<count($headers); $j++) {
-                if (strlen($values[$j]) > 0)
+                if (isset($values[$j]) && strlen($values[$j]) > 0)
                     $record[$headers[$j]] = $values[$j];
             }
 
