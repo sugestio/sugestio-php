@@ -730,6 +730,7 @@ class OAuthRequest
 	 */
 	private function getRequestBody ()
 	{
+		return ''; // workaround for issue 66: http://code.google.com/p/oauth-php/issues/detail?id=66 
 		$body = null;
 		if ($this->method == 'POST' || $this->method == 'PUT')
 		{
