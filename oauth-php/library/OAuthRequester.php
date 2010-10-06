@@ -112,9 +112,9 @@ class OAuthRequester extends OAuthRequestSigner
 		$this->sign($usr_id, null, $name);
 		$text   = $this->curl_raw($curl_options);
 		$result = $this->curl_parse($text);
-                // Modified behaviour: SugestioClient.php should always receive the $result array
-                // Response codes such as 404 may occur as part of the normal web service usage
-                // and need to be forwarded to the Sugestio client
+		// Modified behaviour: SugestioClient.php should always receive the $result array
+		// Response codes such as 404 may occur as part of the normal web service usage
+		// and need to be forwarded to the Sugestio client
 		//if ($result['code'] >= 400)
 		//{
 		//	throw new OAuthException2('Request failed with code ' . $result['code'] . ': ' . $result['body']);

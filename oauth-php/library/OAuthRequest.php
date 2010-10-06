@@ -3,7 +3,7 @@
 /**
  * Request wrapper class.  Prepares a request for consumption by the OAuth routines
  * 
- * @version $Id: OAuthRequest.php 133 2010-06-22 16:55:36Z brunobg@corollarium.com $
+ * @version $Id: OAuthRequest.php 139 2010-07-29 15:14:08Z brunobg@corollarium.com $
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Nov 16, 2007 12:20:31 PM
  * 
@@ -86,7 +86,15 @@ class OAuthRequest
 		{
 			// non anyMeta systems
 			if (!$method) {
-				$method	= $_SERVER['REQUEST_METHOD'];
+				if (isset($_SERVER['SCRIPT_URI'])) {
+					$method	= $_SERVER['SCRIPT_URI'] . $_SERVER['QUERY_STRING'];
+				}
+				else if (isset($_SERVER['REQUEST_METHOD'])) {
+					$method	= $_SERVER['REQUEST_METHOD'];
+				}
+				else {
+					$method = 'GET';
+				}
 			}
 			$proto = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 			if (empty($uri)) {
@@ -496,7 +504,7 @@ class OAuthRequest
 	protected function parseUri ( $parameters )
 	{
 		$ps = @parse_url($this->uri);
-		
+
 		// Get the current/requested method
 		$ps['scheme'] = strtolower($ps['scheme']);
 
@@ -730,7 +738,7 @@ class OAuthRequest
 	 */
 	private function getRequestBody ()
 	{
-		return ''; // workaround for issue 66: http://code.google.com/p/oauth-php/issues/detail?id=66 
+		return ''; // workaround for issue 66: http://code.google.com/p/oauth-php/issues/detail?id=66
 		$body = null;
 		if ($this->method == 'POST' || $this->method == 'PUT')
 		{

@@ -38,7 +38,7 @@ class OAuthStore2Leg extends OAuthStoreAbstract
 	protected $consumer_secret;
 	protected $signature_method = array('HMAC-SHA1');
 	protected $token_type = false;
-
+	
 	/*
 	 * Takes two options: consumer_key and consumer_secret
 	 */
@@ -99,6 +99,7 @@ class OAuthStore2Leg extends OAuthStoreAbstract
 	public function setConsumerAccessTokenTtl ( $token, $ttl ) { throw new OAuthException2("OAuthStore2Leg doesn't support " . __METHOD__); }
 	
 	public function listConsumers ( $user_id ) { throw new OAuthException2("OAuthStore2Leg doesn't support " . __METHOD__); }
+	public function listConsumerApplications( $begin = 0, $total = 25 )  { throw new OAuthException2("OAuthStore2Leg doesn't support " . __METHOD__); }
 	public function listConsumerTokens ( $user_id ) { throw new OAuthException2("OAuthStore2Leg doesn't support " . __METHOD__); }
 
 	public function checkServerNonce ( $consumer_key, $token, $timestamp, $nonce ) { throw new OAuthException2("OAuthStore2Leg doesn't support " . __METHOD__); }

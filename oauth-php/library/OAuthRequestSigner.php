@@ -3,7 +3,7 @@
 /**
  * Sign requests before performing the request.
  * 
- * @version $Id: OAuthRequestSigner.php 134 2010-06-22 17:00:32Z brunobg@corollarium.com $
+ * @version $Id: OAuthRequestSigner.php 138 2010-07-29 15:01:06Z brunobg@corollarium.com $
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Nov 16, 2007 4:02:49 PM
  * 
@@ -119,6 +119,10 @@ class OAuthRequestSigner extends OAuthRequest
 
 		$token		  = isset($secrets['token'])        ? $secrets['token']        : '';
 		$token_secret = isset($secrets['token_secret']) ? $secrets['token_secret'] : '';
+
+		if (!$token) {
+			$token = $this->getParam('oauth_token');
+		}
 
 		$this->setParam('oauth_signature_method',$signature_method);
 		$this->setParam('oauth_signature',		 '');

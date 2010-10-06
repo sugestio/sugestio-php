@@ -4,7 +4,7 @@
  * Verify the current request.  Checks if signed and if the signature is correct.
  * When correct then also figures out on behalf of which user this request is being made.
  *  
- * @version $Id: OAuthRequestVerifier.php 134 2010-06-22 17:00:32Z brunobg@corollarium.com $
+ * @version $Id: OAuthRequestVerifier.php 155 2010-09-10 18:38:33Z brunobg@corollarium.com $
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Nov 16, 2007 4:35:03 PM
  * 
@@ -54,7 +54,7 @@ class OAuthRequestVerifier extends OAuthRequest
  		if ($params) {
  			$encodedParams = array();
  			foreach ($params as $key => $value) {
- 				if (preg_match("/^oauth_/", $key)) { // TODO: should it be "/^oauth_"?  
+ 				if (preg_match("/^oauth_/", $key)) {  
  					continue;
  				}
  				$encodedParams[rawurlencode($key)] = rawurlencode($value);

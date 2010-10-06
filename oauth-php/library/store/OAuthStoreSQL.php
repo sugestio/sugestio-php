@@ -321,12 +321,25 @@ abstract class OAuthStoreSQL extends OAuthStoreAbstract
 			$ttl = "'9999-12-31'";
 		}
 		
-		$ocr_id = $this->query_one('
-					SELECT ocr_id
-					FROM oauth_consumer_registry
-					WHERE ocr_consumer_key = \'%s\'
-					AND ocr_usa_id_ref = %d
-					', $consumer_key, $user_id);
+		if (isset($options['server_uri'])) 
+		{
+			$ocr_id = $this->query_one('
+						SELECT ocr_id
+						FROM oauth_consumer_registry
+						WHERE ocr_consumer_key = \'%s\'
+						AND ocr_usa_id_ref = %d
+						AND ocr_server_uri = \'%s\'
+						', $consumer_key, $user_id, $options['server_uri']);
+		}
+		else 
+		{
+			$ocr_id = $this->query_one('
+						SELECT ocr_id
+						FROM oauth_consumer_registry
+						WHERE ocr_consumer_key = \'%s\'
+						AND ocr_usa_id_ref = %d
+						', $consumer_key, $user_id);
+		}
 					
 		if (empty($ocr_id))
 		{
@@ -1523,6 +1536,30 @@ abstract class OAuthStoreSQL extends OAuthStoreAbstract
 		return $rs;
 	}
 
+	/**
+	 * List of all registered applications. Data returned has not sensitive 
+	 * information and therefore is suitable for public displaying.
+	 * 
+	 * @param int $begin
+	 * @param int $total
+	 * @return array
+	 */
+	public function listConsumerApplications($begin = 0, $total = 25) 
+	{
+		$rs = $this->query_all_assoc('
+				SELECT	osr_id					as id,
+						osr_enabled				as enabled,
+						osr_status 				as status,
+						osr_issue_date			as issue_date,
+						osr_application_uri		as application_uri,
+						osr_application_title	as application_title,
+						osr_application_descr	as application_descr
+				FROM oauth_server_registry
+				ORDER BY osr_application_title
+				');
+		// TODO: pagination
+		return $rs;
+	}
 
 	/**
 	 * Fetch a list of all consumer tokens accessing the account of the given user.

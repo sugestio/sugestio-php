@@ -3,7 +3,7 @@
 /**
  * Server layer over the OAuthRequest handler
  * 
- * @version $Id: OAuthServer.php 134 2010-06-22 17:00:32Z brunobg@corollarium.com $
+ * @version $Id: OAuthServer.php 154 2010-08-31 18:04:41Z brunobg@corollarium.com $
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Nov 27, 2007 12:36:38 PM
  * 
@@ -37,6 +37,17 @@ require_once 'OAuthSession.php';
 class OAuthServer extends OAuthRequestVerifier
 {
 	protected $session;
+	
+	protected $allowed_uri_schemes = array(
+		'http',
+		'https'
+	);
+
+	protected $disallowed_uri_schemes = array(
+		'file',
+		'callto',
+		'mailto'
+	);
 
 	/**
 	 * Construct the request to be verified
@@ -46,13 +57,42 @@ class OAuthServer extends OAuthRequestVerifier
 	 * @param array params The request parameters
 	 * @param string store The session storage class.
 	 * @param array store_options The session storage class parameters.
+	 * @param array options Extra options:
+	 *   - allowed_uri_schemes: list of allowed uri schemes.
+	 *   - disallowed_uri_schemes: list of unallowed uri schemes.
+	 * 
+	 * e.g. Allow only http and https
+	 * $options = array(
+	 *     'allowed_uri_schemes' => array('http', 'https'),
+	 *     'disallowed_uri_schemes' => array()
+	 * );
+	 * 
+	 * e.g. Disallow callto, mailto and file, allow everything else
+	 * $options = array(
+	 *     'allowed_uri_schemes' => array(),
+	 *     'disallowed_uri_schemes' => array('callto', 'mailto', 'file')
+	 * );
+	 * 
+	 * e.g. Allow everything
+	 * $options = array(
+	 *     'allowed_uri_schemes' => array(),
+	 *     'disallowed_uri_schemes' => array()
+	 * ); 
+	 *  
 	 */
 	function __construct ( $uri = null, $method = null, $params = null, $store = 'SESSION', 
-			$store_options = array() )
+			$store_options = array(), $options = array() )
 	{
  		parent::__construct($uri, $method, $params);
  		$this->session = OAuthSession::instance($store, $store_options);
- 	}
+ 		
+	 	if (array_key_exists('allowed_uri_schemes', $options) && is_array($options['allowed_uri_schemes'])) {
+	 		$this->allowed_uri_schemes = $options['allowed_uri_schemes'];
+	 	}
+	 	if (array_key_exists('disallowed_uri_schemes', $options) && is_array($options['disallowed_uri_schemes'])) {
+	 		$this->disallowed_uri_schemes = $options['disallowed_uri_schemes'];
+	 	}
+	}
 	
 	/**
 	 * Handle the request_token request.
@@ -85,7 +125,7 @@ class OAuthServer extends OAuthRequestVerifier
 			// Create a request token
 			$store  = OAuthStore::instance();
 			$token  = $store->addConsumerRequestToken($this->getParam('oauth_consumer_key', true), $options);
-			$result = 'oauth_callback_accepted=1&oauth_token='.$this->urlencode($token['token'])
+			$result = 'oauth_callback_confirmed=1&oauth_token='.$this->urlencode($token['token'])
 					.'&oauth_token_secret='.$this->urlencode($token['token_secret']);
 
 			if (!empty($token['token_ttl']))
@@ -144,8 +184,11 @@ class OAuthServer extends OAuthRequestVerifier
 		{
 			$this->session->set('verify_oauth_token', $rs['token']);
 			$this->session->set('verify_oauth_consumer_key', $rs['consumer_key']);
-			$this->session->set('verify_oauth_callback', (($rs['callback_url'] && $rs['callback_url'] != 'oob') ? 
-				$rs['callback_url'] : $this->getParam('oauth_callback', true)));
+			$cb = $this->getParam('oauth_callback', true); 
+			if ($cb)
+				$this->session->set('verify_oauth_callback', $cb);
+			else
+				$this->session->set('verify_oauth_callback', $rs['callback_url']);
 		}
 		OAuthRequestLogger::flush();
 		return $rs;
@@ -166,7 +209,7 @@ class OAuthServer extends OAuthRequestVerifier
 		OAuthRequestLogger::start($this);
 
 		$token = $this->getParam('oauth_token', true);
-		$verififer = null;
+		$verifier = null;
 		if ($this->session->get('verify_oauth_token') == $token)
 		{
 			// Flag the token as authorized, or remove the token when not authorized
@@ -205,6 +248,23 @@ class OAuthServer extends OAuthRequestVerifier
  				if ($verifier) {
  					$params['oauth_verifier'] = $verifier;
  				}
+ 				
+				$uri = preg_replace('/\s/', '%20', $oauth_callback);
+				if (!empty($this->allowed_uri_schemes)) 
+				{
+					if (!in_array(substr($uri, 0, strpos($uri, '://')), $this->allowed_uri_schemes)) 
+					{
+						throw new OAuthException2('Illegal protocol in redirect uri '.$uri);
+					}
+				} 
+				else if (!empty($this->disallowed_uri_schemes)) 
+				{
+					if (in_array(substr($uri, 0, strpos($uri, '://')), $this->disallowed_uri_schemes))
+					{
+						throw new OAuthException2('Illegal protocol in redirect uri '.$uri);
+					}
+				}
+
  				$this->redirect($oauth_callback, $params);
 			}
 		}
