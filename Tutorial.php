@@ -18,6 +18,7 @@ try {
 
 	//getRecommendations();
 	//getSimilar();
+	//getNeighbours();
 	
 	//addConsumption();
 	//addItem();
@@ -51,6 +52,19 @@ function getSimilar() {
 	
 	echo '<pre>';
 	print_r($recommendations);
+	echo '</pre>';
+	
+}
+
+function getNeighbours() {
+
+	global $client;
+	
+	// get users that are similar to the user with id '1'
+	$neighbours = $client->getNeighbours(1);
+	
+	echo '<pre>';
+	print_r($neighbours);
 	echo '</pre>';
 	
 }
