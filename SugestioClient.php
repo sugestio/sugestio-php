@@ -136,6 +136,26 @@ class SugestioClient {
         else
             throw new Exception($this->createExceptionMessage($result));
     }
+    
+    /**
+     * Gets the neighbours of the given user.
+     * 
+     * @param string $userid the userid     
+     * @exception Exception when the request failed due to clientside or serverside problems
+     * @return array (userid=>string, score=>double)
+     */
+	public function getNeighbours($userid) {
+
+        $method = 'GET';
+        $resource = '/users/' . urlencode($userid) . '/neighbours.csv';
+
+        $result = $this->execute($method, $resource, array());
+
+        if ($result['code'] == 200)
+            return $this->parseRecommendationsOrSimilarItems($result);
+        else
+            throw new Exception($this->createExceptionMessage($result));
+    }
 
     /**
      * Indicates the user did not like this recommendation. Returns the server response.
