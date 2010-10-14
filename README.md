@@ -170,6 +170,26 @@ is listed first.
 	
 	)
 
+### Integration
+
+Suppose the user is currently viewing a product page. The URL for this product page might look 
+like this: <code>productdetails.php?id=1</code>. Displaying a list of products which are similar 
+could go like this:
+
+	function showSimilar() {
+
+		echo "<h2>People who bought this product, also bought:</h2>";
+
+		global $client;
+		$recommendations = $client->getSimilar($_GET['id']);
+
+		foreach ($recommendations as $recommendation) {			
+			$product = getProduct($recommendation['itemid']);			
+			echo "<a href=\"productdetails.php?id=${product['id']}\">${product['name']}</a><br/>";			
+		}
+		
+	}
+
 ## Similar users
 
 Collaborative filtering algorithms find clusters of users with a similar consumption behaviour.
@@ -210,26 +230,9 @@ is listed first.
 	
 	)
 
-
 ### Integration
 
-Suppose the user is currently viewing a product page. The URL for this product page might look 
-like this: <code>productdetails.php?id=1</code>. Displaying a list of products which are similar 
-could go like this:
-
-	function showSimilar() {
-
-		echo "<h2>People who bought this product, also bought:</h2>";
-
-		global $client;
-		$recommendations = $client->getSimilar($_GET['id']);
-
-		foreach ($recommendations as $recommendation) {			
-			$product = getProduct($recommendation['itemid']);			
-			echo "<a href=\"productdetails.php?id=${product['id']}\">${product['name']}</a><br/>";			
-		}
-		
-	}
+Clusters of similar users can be useful input for other processes.
 
 ## Submit a consumption
 
