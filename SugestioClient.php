@@ -96,7 +96,7 @@ class SugestioClient {
      * @param string $userid the userid
      * @param array $options name=>value array with request options
      * @exception Exception when the request failed due to clientside or serverside problems
-     * @return array (itemid=>string, score=>double)
+     * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
      */
     public function getRecommendations($userid, $options=array()) {
 
@@ -122,7 +122,7 @@ class SugestioClient {
      * @param string $itemid the itemid
      * @param array $options name=>value array with request options
      * @exception Exception when the request failed due to clientside or serverside problems
-     * @return array (itemid=>string, score=>double)
+     * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
      */
     public function getSimilar($itemid, $options=array()) {
 
@@ -142,7 +142,7 @@ class SugestioClient {
      * 
      * @param string $userid the userid     
      * @exception Exception when the request failed due to clientside or serverside problems
-     * @return array (userid=>string, score=>double)
+     * @return array (userid=>string, score=>double, certainty=>double, algorithm=>string)
      */
 	public function getNeighbours($userid) {
 
