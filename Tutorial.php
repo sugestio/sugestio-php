@@ -11,16 +11,23 @@ require_once dirname(__FILE__) . '/SugestioConsumption.php';
 
 $client = new SugestioClient();
 
-// Uncomment the feature that you want to try out
 
-//getRecommendations();
-//getSimilar();
+try {
+	
+	// Uncomment the feature that you want to try out
 
-//addConsumption();
-//addItem();
-//addUser();
-
-//getAnalytics();
+	//getRecommendations();
+	//getSimilar();
+	
+	//addConsumption();
+	//addItem();
+	//addUser();
+	
+	//getAnalytics();
+    
+} catch (Exception $e) {
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
+}
 
 function getRecommendations() {
 	
