@@ -94,6 +94,7 @@ the item that best fits this user's taste is listed first.
 			(
 				[itemid] => 1
 				[score] => 0.9
+				[certainty] => 0.1
 				[algorithm] => Sandbox
 			)
 	
@@ -101,6 +102,7 @@ the item that best fits this user's taste is listed first.
 			(
 				[itemid] => 2
 				[score] => 0.8
+				[certainty] => 0.1
 				[algorithm] => Sandbox
 			)
 	
@@ -156,6 +158,7 @@ is listed first.
 	        (
 	            [itemid] => 2
 	            [score] => 0.8
+	            [certainty] => 0.5
 	            [algorithm] => Sandbox
 	        )
 	
@@ -163,6 +166,7 @@ is listed first.
 	        (
 	            [itemid] => 3
 	            [score] => 0.7
+	            [certainty] => 0.5
 	            [algorithm] => Sandbox
 	        )
 	
@@ -193,7 +197,7 @@ could go like this:
 ## Similar users
 
 Collaborative filtering algorithms find clusters of users with a similar consumption behaviour.
-These users are called "neighbours." Run the following code to get the neighbours of user 1:
+These users are called _neighbours_. Run the following code to get the neighbours of user 1:
 
 ### Code
 
@@ -216,6 +220,7 @@ is listed first.
 	        (
 	            [userid] => 2
 	            [score] => 0.9
+	            [certainty] => 0.5
 	            [algorithm] => Sandbox
 	        )
 	
@@ -223,6 +228,7 @@ is listed first.
 	        (
 	            [userid] => 3
 	            [score] => 0.8
+	            [certainty] => 0.5
 	            [algorithm] => Sandbox
 	        )
 	
