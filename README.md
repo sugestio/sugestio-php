@@ -10,7 +10,7 @@ Our Drupal and Magento modules are built on top of this generic library.
 Sugestio is a scalable and fault tolerant service that now brings the power of 
 web personalisation to all developers. The RESTful web service provides an easy to use 
 interface and a set of developer libraries that enable you to enrich 
-your content portals, E-Commerce sites and other content based websites.
+your content portals, e-commerce sites and other content based websites.
 
 ### Access credentials and the Sandbox
 
@@ -169,6 +169,47 @@ is listed first.
 		...
 	
 	)
+
+## Similar users
+
+Collaborative filtering algorithms find clusters of users with a similar consumption behaviour.
+These users are called "neighbours." Run the following code to get the neighbours of user 1:
+
+### Code
+
+	$neighbours = $client->getNeighbours(1);
+	
+	echo '<pre>';
+	print_r($neighbours);
+	echo '</pre>';
+	
+### Response
+
+As usual, the client responds with an indexed array of associative arrays. 
+Each associative array represents a neighbour of user 1. These neighbours are again
+sorted by descending score. In other words, the user that is the most similar to user 1, 
+is listed first.
+
+	Array
+	(
+	    [0] => Array
+	        (
+	            [userid] => 2
+	            [score] => 0.9
+	            [algorithm] => Sandbox
+	        )
+	
+	    [1] => Array
+	        (
+	            [userid] => 3
+	            [score] => 0.8
+	            [algorithm] => Sandbox
+	        )
+	
+		...
+	
+	)
+
 
 ### Integration
 
