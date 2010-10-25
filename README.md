@@ -48,6 +48,12 @@ with the recommendation service. As such, your system needs to have a current
 version of cURL installed. In addition, your PHP installation must include the 
 php-curl extension.
 
+This distribution includes a slightly modified copy of 
+oauth-php (http://code.google.com/p/oauth-php/):
+
+* OAuthRequester::doRequest does not throw an OAuthException2 on response codes >= 400
+* Workaround for Issue #66
+
 # Tutorial and sample code
 
 <code>Tutorial.php</code> contains sample code that illustrates how you can use the library. 
