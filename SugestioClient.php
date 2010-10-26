@@ -225,6 +225,27 @@ class SugestioClient {
 
         return $records;
     }
+    
+    /**
+     * Gets an arbitrary resource as raw data.
+     *
+     * @param string $resource the resource to get, e.g., /logs/400.txt or /users/1/recommendations.csv
+     * @exception Exception when the request failed due to clientside or serverside problems
+     * @return string
+     */
+    public function getResource($resource) {
+    	
+    	$method = 'GET';
+    	$result = $this->execute($method, $resource, array());
+    	
+    	if ($result['code'] != 200)
+            throw new Exception($this->createExceptionMessage($result));
+
+        if ($result == null || $result['body'] == null)
+            return '';
+            
+        return $result['body'];
+    }
 
     /**
      * signs and executes the request
