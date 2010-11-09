@@ -49,6 +49,9 @@ try {
     //$test->testGetSimilar();
     //$test->testDeleteRecommendation();
     //$test->testGetAnalytics();
+    $test->testGetNeighbours();
+    //$test->testDeleteItem();
+    //$test->testDeleteUser();
     
 } catch (Exception $e) {
     echo $e->getMessage();
@@ -164,6 +167,32 @@ class SugestioClientTest {
         echo '</pre>';
     }
 
+    public function testGetNeighbours() {
+    	
+    	$result = $this->client->getNeighbours(1);
+
+    	echo '<pre>';
+    	print_r($result);
+    	echo '</pre>';
+    }
+    
+    public function testDeleteItem() {
+    	
+    	$result = $this->client->deleteItem("x");
+
+    	echo '<pre>';
+    	print_r($result);
+    	echo '</pre>';
+    }
+    
+    public function testDeleteUser() {
+    	
+    	$result = $this->client->deleteUser("x");
+
+    	echo '<pre>';
+    	print_r($result);
+    	echo '</pre>';
+    }
 }
 
 /**
