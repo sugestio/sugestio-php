@@ -185,7 +185,7 @@ class SugestioClient {
     public function deleteUser($userid) {
     	
     	$method = 'DELETE';
-    	$resource = '/users/' . urlencode($itemid);
+    	$resource = '/users/' . urlencode($userid);
     	
     	$result = $this->execute($method, $resource, array());
     	
