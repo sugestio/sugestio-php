@@ -175,8 +175,38 @@ class SugestioClient {
             return $this->parseRecommendationsOrSimilarItems($result);
         else
             throw new Exception($this->createExceptionMessage($result));
+    }    
+    
+    /**
+     * Deletes all the metadata of the given user. Returns the server response.     
+     * @param $userid the userid
+     * @return array (code=>int, headers=>array(), body=>string)
+     */
+    public function deleteUser($userid) {
+    	
+    	$method = 'DELETE';
+    	$resource = '/users/' . urlencode($itemid);
+    	
+    	$result = $this->execute($method, $resource, array());
+    	
+    	return $result;
     }
-
+    
+    /**
+     * Deletes all the metadata of the given item. Returns the server response.
+     * @param $itemid the itemid
+     * @return array (code=>int, headers=>array(), body=>string)
+     */
+    public function deleteItem($itemid) {
+    	
+    	$method = 'DELETE';
+    	$resource = '/items/' . urlencode($itemid);
+    	
+    	$result = $this->execute($method, $resource, array());
+    	
+    	return $result;
+    }
+    
     /**
      * Indicates the user did not like this recommendation. Returns the server response.
      *
@@ -233,7 +263,7 @@ class SugestioClient {
      * @exception Exception when the request failed due to clientside or serverside problems
      * @return string
      */
-    public function getResource($resource) {
+	public function getResource($resource) {
     	
     	$method = 'GET';
     	$result = $this->execute($method, $resource, array());
