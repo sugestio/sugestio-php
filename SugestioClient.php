@@ -61,7 +61,7 @@ class SugestioClient {
      * Adds a user. Returns the server response.
      * 
      * @param SugestioUser $user the user
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return int HTTP status code
      */
     public function addUser($user) {
 
@@ -77,7 +77,7 @@ class SugestioClient {
      * Adds an item. Returns the server response.
      *
      * @param SugestioItem $item the item
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return int HTTP status code
      */
     public function addItem($item) {
 
@@ -93,7 +93,7 @@ class SugestioClient {
      * Adds a consumption. Returns the server response code.
      *
      * @param SugestioConsumption $consumption the consumption
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return int HTTP status code
      */
     public function addConsumption($consumption) {
 
@@ -180,7 +180,7 @@ class SugestioClient {
     /**
      * Deletes all the metadata of the given user. Returns the server response.     
      * @param $userid the userid
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return int HTTP status code
      */
     public function deleteUser($userid) {
     	
@@ -189,13 +189,13 @@ class SugestioClient {
     	
     	$result = $this->execute($method, $resource, array());
     	
-    	return $result;
+    	return $result['code'];
     }
     
     /**
      * Deletes all the metadata of the given item. Returns the server response.
      * @param $itemid the itemid
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return int HTTP status code
      */
     public function deleteItem($itemid) {
     	
@@ -204,7 +204,7 @@ class SugestioClient {
     	
     	$result = $this->execute($method, $resource, array());
     	
-    	return $result;
+    	return $result['code'];
     }
     
     /**
@@ -212,7 +212,7 @@ class SugestioClient {
      *
      * @param string $userid
      * @param string $itemid
-     * @return array (code=>int, headers=>array(), body=>string)
+     * @return array int HTTP status code
      */
     public function deleteRecommendation($userid, $itemid) {
 
