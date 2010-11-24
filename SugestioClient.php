@@ -117,16 +117,16 @@ class SugestioClient {
      * @param array $options name=>value array with request options
      * @exception Exception when the request failed due to clientside or serverside problems
      * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
-     */
+     */    
     public function getRecommendations($userid, $options=array()) {
-
-        $method = 'GET';
-        $resource = '/users/' . urlencode($userid) . '/recommendations.csv';
+    	
+    	$method = 'GET';
+        $resource = '/users/' . urlencode($userid) . '/recommendations.json';
 
         $result = $this->execute($method, $resource, $options);
 
         if ($result['code'] == 200)
-            return $this->parseRecommendationsOrSimilarItems($result);
+            return json_decode($result['body'], true);
         else
             throw new Exception($this->createExceptionMessage($result));
     }
@@ -147,12 +147,12 @@ class SugestioClient {
     public function getSimilar($itemid, $options=array()) {
 
         $method = 'GET';
-        $resource = '/items/' . urlencode($itemid) . '/similar.csv';
+        $resource = '/items/' . urlencode($itemid) . '/similar.json';
 
         $result = $this->execute($method, $resource, $options);
 
         if ($result['code'] == 200)
-            return $this->parseRecommendationsOrSimilarItems($result);
+            return json_decode($result['body'], true);
         else
             throw new Exception($this->createExceptionMessage($result));
     }
@@ -167,12 +167,12 @@ class SugestioClient {
 	public function getNeighbours($userid) {
 
         $method = 'GET';
-        $resource = '/users/' . urlencode($userid) . '/neighbours.csv';
+        $resource = '/users/' . urlencode($userid) . '/neighbours.json';
 
         $result = $this->execute($method, $resource, array());
 
         if ($result['code'] == 200)
-            return $this->parseRecommendationsOrSimilarItems($result);
+            return json_decode($result['body'], true);
         else
             throw new Exception($this->createExceptionMessage($result));
     }    
