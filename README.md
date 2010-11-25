@@ -92,36 +92,57 @@ Suppose we want to generate a personalized content offer for user 1.
 
 The client responds with an indexed array of associative arrays. Each associative array 
 represents a recommendation. Recommendations are sorted by descending score. In other words, 
-the item that best fits this user's taste is listed first.
+the item that best fits this user's taste is listed first. The *item* element is only present 
+if the service has metadata for the item in question.
 
 	Array
 	(
-		[0] => Array
-			(
+    	[0] => Array
+        	(
 				[itemid] => 1
-				[score] => 0.9
-				[certainty] => 0.1
-				[algorithm] => Sandbox
-			)
-	
-		[1] => Array
-			(
-				[itemid] => 2
-				[score] => 0.8
-				[certainty] => 0.1
-				[algorithm] => Sandbox
-			)
-	
-		...
+            	[score] => 0.9
+            	[algorithm] => Sandbox
+            	[certainty] => 0.1
+            	[item] => Array
+                	(
+                    	[title] => Item 1
+                    	[permalink] => http://localhost/pages/1
+                    	[category] => Array
+                        	(
+                            	[0] => A
+                            	[1] => B
+                        	)
+                	)
 
-	)
+        	)
+
+    	[1] => Array
+        	(
+            	[itemid] => 2
+            	[score] => 0.8
+            	[algorithm] => Sandbox
+            	[certainty] => 0.1
+            	[item] => Array
+                	(
+                    	[title] => Item 2
+                    	[permalink] => http://localhost/pages/2
+                    	[category] => Array
+                        	(
+                            	[0] => B
+                            	[1] => C
+                        	)
+	                )
+        	)
+        	
+        	...
+        )
+
 	
 ### Integration
 
 Let's assume our web application stores the ID of the current user in a session variable 
-<code>$_SESSION['userid']</code>, and that we have a method <code>getProduct()</code> 
-which looks up product details based on product id, e.g. by performing 
-a SELECT query on our database.
+<code>$_SESSION['userid']</code>. The *title* and *permalink* attributes of the *item* element 
+can be used to easily visualize the recommendations.
 
 	function showRecommendations() {
 
@@ -130,9 +151,10 @@ a SELECT query on our database.
 		global $client;
 		$recommendations = $client->getRecommendations($_SESSION['userid']);
 
-		foreach ($recommendations as $recommendation) {			
-			$product = getProduct($recommendation['itemid']);			
-			echo "<a href=\"productdetails.php?id=${product['id']}\">${product['name']}</a><br/>";			
+		foreach ($recommendations as $recommendation) {		
+			$title = $recommendation['item']['title'];
+			$link = "/productdetails.php?id=" . $recommendation['itemid'];							
+			echo "<a href=\"$link\">$title</a><br/>";		
 		}
 		
 	}
@@ -166,6 +188,16 @@ is listed first.
 	            [score] => 0.8
 	            [certainty] => 0.5
 	            [algorithm] => Sandbox
+	            [item] => Array
+                	(
+                    	[title] => Item 2
+                    	[permalink] => http://localhost/pages/2
+                    	[category] => Array
+                        	(
+                            	[0] => B
+                            	[1] => C
+                        	)
+	                )
 	        )
 	
 	    [1] => Array
@@ -174,6 +206,16 @@ is listed first.
 	            [score] => 0.7
 	            [certainty] => 0.5
 	            [algorithm] => Sandbox
+	            [item] => Array
+                	(
+                    	[title] => Item 3
+                    	[permalink] => http://localhost/pages/3
+                    	[category] => Array
+                        	(
+                            	[0] => C
+                            	[1] => D
+                        	)
+	                )
 	        )
 	
 		...
@@ -194,8 +236,9 @@ could go like this:
 		$recommendations = $client->getSimilar($_GET['id']);
 
 		foreach ($recommendations as $recommendation) {			
-			$product = getProduct($recommendation['itemid']);			
-			echo "<a href=\"productdetails.php?id=${product['id']}\">${product['name']}</a><br/>";			
+			$title = $recommendation['item']['title'];
+			$link = "/productdetails.php?id=" . $recommendation['itemid'];							
+			echo "<a href=\"$link\">$title</a><br/>";						
 		}
 		
 	}
@@ -351,6 +394,8 @@ Content-based algorithms use item metadata to generate recommendations. The
 <code>SugestioItem</code> class lets you assign all kinds of metadata to items. 
 Some examples are:
 
+* title
+* permalink
 * tags
 * category information
 * availability
@@ -359,7 +404,9 @@ Some examples are:
 * ...
 
 Some attributes, like location, take a scalar value. Because items can have multiple tags or 
-categories associated with them, we have to assign an indexed array to these attributes. 
+categories associated with them, we have to assign an indexed array to these attributes. Title 
+and permalink can be used to easily visualize the recommendations, so it's a good idea to always
+submit these attributes.
 
 For a full list of item attributes and how to use them, see the 
 [API documentation](http://www.sugestio.com/documentation).
@@ -370,6 +417,8 @@ The <code>SugestioItem</code> constructor takes a single value, the item id. We 
 values to various attributes, both scalar and non-scalar. 
 
 	$item = new SugestioItem('A');
+	$item->title = "Item A";
+	$item->permalink = "http://localhost/products/A";
 	$item->tag = array('tag1', 'tag2');
 	$item->category = array('category1', 'category2');
 	$item->creator = array('artist1');	
@@ -400,7 +449,7 @@ processed by the Sugestio service.
 Let's assume our e-commerce application has a control panel for adding new products to the 
 catalog. A method <code>createProduct($productInfo)</code> gets its input from a product input form and 
 creates a new record in the Product table of our SQL database. Once the database has generated 
-a unique id for this product, we can transmit some metadata to the recommendation service:
+a unique id for this product, we can submit metadata to the recommendation service:
 
 	function createProduct($productInfo) {
 
@@ -414,6 +463,7 @@ a unique id for this product, we can transmit some metadata to the recommendatio
 		global $client;
 		
 		$item = new SugestioItem($newProductId);
+		$item->title = $productInfo['name'];		
 		$item->tag = $productInfo['tag'];
 		$item->category = $productInfo['category'];
 		$client->addItem($item);		
