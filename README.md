@@ -54,6 +54,50 @@ This distribution includes a slightly modified copy of
 * OAuthRequester::doRequest does not throw an OAuthException2 on response codes >= 400
 * Workaround for Issue #66
 
+# Quick start
+
+	require_once dirname(__FILE__) . '/SugestioClient.php';
+	require_once dirname(__FILE__) . '/SugestioUser.php';
+	require_once dirname(__FILE__) . '/SugestioItem.php';
+	require_once dirname(__FILE__) . '/SugestioConsumption.php';
+	
+	$client = new SugestioClient('sandbox', 'demo');
+	
+	// user X has consumed item Y
+	$consumption = new SugestioConsumption('X', 'Y'); // userid, itemid
+	$client->addConsumption($consumption);
+	
+	// submit item metadata for item with ID Y
+	$item = new SugestioItem('Y');
+	$item->title = 'Item Y';
+	$item->category = array('A', 'B');
+	$client->addItem($item);
+	
+	// get recommendations for user 1
+	$client->getRecommendations(1);
+	
+	// two best recommendations for user 1
+	$client->getRecommendations(1, array('limit'=>2));
+	
+	// only recommendations from category 'music'
+	$client->getRecommendations(1, array('category'=>'music'));	
+	
+	// only recommendations within 1 mile of this location
+	$queryParams = array(
+		'location_latlong'=>'40.688889,-74.045111',
+		'location_radius'=>'1',
+		'location_unit'=>'mi');	
+	$client->getRecommendations(1, $queryParams);
+	
+	// combined filter
+	$queryParams = array(
+		'limit'=>5, // best five
+		'category'=>'A,!B,C' // from category A or C, but not B
+		'location_latlong'=>'40.688889,-74.045111',
+		'location_radius'=>'1',
+		'location_unit'=>'mi');	
+	$client->getRecommendations(1, $queryParams);
+
 # Tutorial and sample code
 
 <code>Tutorial.php</code> contains sample code that illustrates how you can use the library. 
@@ -141,8 +185,9 @@ if the service has metadata for the item in question.
 ### Integration
 
 Let's assume our web application stores the ID of the current user in a session variable 
-<code>$_SESSION['userid']</code>. The *title* and *permalink* attributes of the *item* element 
-can be used to easily visualize the recommendations.
+<code>$_SESSION['userid']</code>. We can use this variable to retrieve personal recommendations 
+for this user. The title attribute of the *item* element can be used to easily visualize the 
+recommendations.
 
 	function showRecommendations() {
 
