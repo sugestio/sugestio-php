@@ -32,9 +32,11 @@ class SugestioItem {
 
     public $id;
 
-    public $description_short;
-    public $description_full;
+    public $title;
     public $permalink;
+    
+    public $description_short;
+    public $description_full;    
 
     public $available;
     public $from;
@@ -72,10 +74,12 @@ class SugestioItem {
         $fields = array();
 
         $fields['id'] = $this->id;
+        
+        $fields['title'] = $this->title;
+        $fields['permalink'] = $this->permalink;
 
         $fields['description_short'] = $this->description_short;
         $fields['description_full'] = $this->description_full;
-        $fields['permalink'] = $this->permalink;
 
         $fields['available'] = $this->available;
         $fields['from'] = $this->from;
