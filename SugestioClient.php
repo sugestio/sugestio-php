@@ -175,7 +175,22 @@ class SugestioClient {
             return json_decode($result['body'], true);
         else
             throw new Exception($this->createExceptionMessage($result));
-    }    
+    }
+
+    /**
+     * Deletes the given consumption.     
+     * @param $consumptionid the consumptionid
+     * return int HTTP status code
+     */
+    public function deleteConsumption($consumptionid) {
+    	
+    	$method = 'DELETE';
+    	$resource = '/consumptions/' . urlencode($consumptionid) . '.json';
+    	
+    	$result = $this->execute($method, $resource, array());
+    	
+    	return $result['code'];
+    }
     
     /**
      * Deletes all the metadata of the given user. Returns the server response.     
@@ -185,7 +200,7 @@ class SugestioClient {
     public function deleteUser($userid) {
     	
     	$method = 'DELETE';
-    	$resource = '/users/' . urlencode($userid);
+    	$resource = '/users/' . urlencode($userid) . '.json';
     	
     	$result = $this->execute($method, $resource, array());
     	
@@ -200,7 +215,7 @@ class SugestioClient {
     public function deleteItem($itemid) {
     	
     	$method = 'DELETE';
-    	$resource = '/items/' . urlencode($itemid);
+    	$resource = '/items/' . urlencode($itemid) . '.json';
     	
     	$result = $this->execute($method, $resource, array());
     	
