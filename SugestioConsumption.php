@@ -32,6 +32,8 @@ class SugestioConsumption {
 
     public $itemid;
     public $userid;
+    
+    public $consumptionid;
 
     public $type;
     public $detail;
@@ -65,6 +67,8 @@ class SugestioConsumption {
 
         $fields['userid'] = $this->userid;
         $fields['itemid'] = $this->itemid;
+        
+        $fields['consumptionid'] = $this->consumptionid;
 
         $fields['type'] = $this->type;
         $fields['detail'] = $this->detail;

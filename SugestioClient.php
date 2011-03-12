@@ -64,11 +64,21 @@ class SugestioClient {
      * @return int HTTP status code
      */
     public function addUser($user) {
+    	return $this->addUsers(array($user));      
+    }
+    
+	/**
+     * Adds multiple users. Returns the server response.
+     * 
+     * @param array $users array of SugestioUser objects
+     * @return int HTTP status code
+     */
+    public function addUsers($users) {
 
         $method = 'POST';
         $resource = '/users.json';
 
-        $result = $this->execute($method, $resource, null, $user->getFields());
+        $result = $this->execute($method, $resource, null, $users);
 
         return $result['code'];
     }
@@ -80,12 +90,22 @@ class SugestioClient {
      * @return int HTTP status code
      */
     public function addItem($item) {
+        return $this->addItems(array($item));
+    }
+    
+    /**
+     * Adds multiple items. Returns the server response.
+     *
+     * @param array $items array of ConsumptionItem objects
+     * @return int HTTP status code
+     */
+    public function addItems($items) {
 
-        $method = 'POST';
-        $resource = '/items.json';
-
-        $result = $this->execute($method, $resource, null, $item->getFields());
-		print_r($result);
+    	$method = 'POST';
+    	$resource = '/items.json';  
+    	
+    	$result = $this->execute($method, $resource, null, $items);
+    	
         return $result['code'];
     }
 
@@ -96,12 +116,22 @@ class SugestioClient {
      * @return int HTTP status code
      */
     public function addConsumption($consumption) {
+        return $this->addConsumptions(array($consumption));
+    }
+    
+	/**
+     * Adds multiple consumptions. Returns the server response code.
+     *
+     * @param array $consumptions array of SugestioConsumption objects
+     * @return int HTTP status code
+     */
+    public function addConsumptions($consumptions) {
 
         $method = 'POST';
         $resource = '/consumptions.json';
         
-        $result = $this->execute($method, $resource, null, $consumption->getFields());
-		print_r($result);
+        $result = $this->execute($method, $resource, null, $consumptions);
+		
         return $result['code'];
     }
 
@@ -289,7 +319,7 @@ class SugestioClient {
      * @param array $fields data fields to be encoded as JSON (POST or PUT)
      * @return array ('code'=>int, 'headers'=>array(), 'body'=>string)
      */
-    protected function execute($method, $resource, $params=array(), $fields=array()) {        
+    protected function execute($method, $resource, $params=array(), $data=NULL) {        
 
         $options = array(
                 'consumer_key' => $this->settings->account,
@@ -305,12 +335,30 @@ class SugestioClient {
 
             if ($method == 'GET' || $method == 'DELETE') {
             	$request = new OAuthRequester($url, $method, $params);            
-            } else {            	
-            	$request = new OAuthRequester($url, $method, null, json_encode($fields));            	            	
+            } else {
+
+            	if (is_object($data)) {
+            		
+            		// data is a single item, user or consumption object
+            		$body = json_encode($data->getFields());
+            		
+            	} else if (is_array($data)) {
+            		
+            		// data is an array of items, users or consumptions
+            		$objects = array();
+            		
+            		foreach ($data as $object) {
+            			$objects[] = $object->getFields();            			
+            		}
+            		
+            		$body = json_encode($objects);
+            	}
+            	
+            	$request = new OAuthRequester($url, $method, null, $body);            	            	
             }
 
             $result = $request->doRequest();
-            
+            //print_r($result);
             return $result;
 
         } catch(OAuthException2 $e) {
@@ -320,6 +368,10 @@ class SugestioClient {
         }
     }    
 
+    /**     
+     * Creates an exception message from a curl result array
+     * @param array $result curl result array
+     */
     private function createExceptionMessage($result=array()) {
         
         $message = 'Server response code ' . $result['code'];
