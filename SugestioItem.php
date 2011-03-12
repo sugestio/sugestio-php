@@ -88,10 +88,10 @@ class SugestioItem {
         $fields['location_simple'] = $this->location_simple;
         $fields['location_latlong'] = $this->location_latlong;
 
-        $fields['category[]'] = $this->category;
-        $fields['creator[]'] = $this->creator;
-        $fields['segment[]'] = $this->segment;
-        $fields['tag[]'] = $this->tag;
+        $fields['category'] = $this->category;
+        $fields['creator'] = $this->creator;
+        $fields['segment'] = $this->segment;
+        $fields['tag'] = $this->tag;
 
         return $fields;
     }

@@ -66,9 +66,9 @@ class SugestioClient {
     public function addUser($user) {
 
         $method = 'POST';
-        $resource = '/users';
+        $resource = '/users.json';
 
-        $result = $this->execute($method, $resource, $user->getFields());
+        $result = $this->execute($method, $resource, null, $user->getFields());
 
         return $result['code'];
     }
@@ -82,10 +82,10 @@ class SugestioClient {
     public function addItem($item) {
 
         $method = 'POST';
-        $resource = '/items';
+        $resource = '/items.json';
 
-        $result = $this->execute($method, $resource, $item->getFields());
-
+        $result = $this->execute($method, $resource, null, $item->getFields());
+		print_r($result);
         return $result['code'];
     }
 
@@ -98,10 +98,10 @@ class SugestioClient {
     public function addConsumption($consumption) {
 
         $method = 'POST';
-        $resource = '/consumptions';
+        $resource = '/consumptions.json';
         
-        $result = $this->execute($method, $resource, $consumption->getFields());
-
+        $result = $this->execute($method, $resource, null, $consumption->getFields());
+		print_r($result);
         return $result['code'];
     }
 
@@ -249,26 +249,14 @@ class SugestioClient {
     public function getAnalytics($limit=100) {
 
         $method = 'GET';
-        $resource = '/analytics.csv';
+        $resource = '/analytics.json';
 
         $result = $this->execute($method, $resource, array('limit'=>$limit));
 
-        if ($result['code'] != 200)
+        if ($result['code'] == 200)
+            return json_decode($result['body'], true);
+        else
             throw new Exception($this->createExceptionMessage($result));
-
-        if ($result == null || $result['body'] == null)
-            return array();
-
-        $rows = explode("\n", trim($result['body']));
-
-        $records = array();
-
-        if (count($rows) > 1) {
-            $headers = explode(',', trim($rows[0]));
-            $records = $this->parseCsv($headers, $rows, 1, count($rows)-1);
-        }
-
-        return $records;
     }
     
     /**
@@ -293,13 +281,15 @@ class SugestioClient {
     }
 
     /**
-     * signs and executes the request
+     * signs and executes the request     
+     *
+     * @param string $method HTTP method, e.g. GET, POST, DELETE
+     * @param string $resource e.g. /consumptions.json
+     * @param array $params query parameters (GET or DELETE)
+     * @param array $fields data fields to be encoded as JSON (POST or PUT)
      * @return array ('code'=>int, 'headers'=>array(), 'body'=>string)
      */
-    protected function execute($method, $resource, $params=array(), $body=null) {
-
-        //remove empty entries from the fields
-        $params = $this->removeEmptiesFromArray($params);
+    protected function execute($method, $resource, $params=array(), $fields=array()) {        
 
         $options = array(
                 'consumer_key' => $this->settings->account,
@@ -313,9 +303,14 @@ class SugestioClient {
             //print_r($params);
             $url = $this->settings->base_url . '/sites/' . $this->settings->account . $resource;
 
-            $request = new OAuthRequester($url, $method, $params);
-            $result = $request->doRequest();
+            if ($method == 'GET' || $method == 'DELETE') {
+            	$request = new OAuthRequester($url, $method, $params);            
+            } else {            	
+            	$request = new OAuthRequester($url, $method, null, json_encode($fields));            	            	
+            }
 
+            $result = $request->doRequest();
+            
             return $result;
 
         } catch(OAuthException2 $e) {
@@ -323,58 +318,7 @@ class SugestioClient {
             //throw new Exception('Error. ' . $e->getMessage());
             return array();
         }
-    }
-
-    private function parseRecommendationsOrSimilarItems($result) {
-
-        if ($result == null || $result['body'] == null) {
-            return array();
-        }
-
-        $rows = explode("\n", trim($result['body']));
-
-        $recommendations = array();
-
-        if (count($rows) > 0) {
-            $headers = array('itemid', 'score', 'algorithm', 'certainty');
-            $recommendations = $this->parseCsv($headers, $rows, 0, count($rows)-1);
-        }
-
-        return $recommendations;
-
-    }
-
-    private function parseCsv($headers, $rows, $from, $to) {
-
-        $records = array();
-
-        for ($i=$from; $i<=$to; $i++) {
-
-            $values = explode(',', trim($rows[$i]));
-            $record = array();
-
-            for ($j=0; $j<count($headers); $j++) {
-                if (isset($values[$j]) && strlen($values[$j]) > 0)
-                    $record[$headers[$j]] = $values[$j];
-            }
-
-            $records[] = $record;
-        }
-
-        return $records;
-
-    }
-
-    private function removeEmptiesFromArray($array=array()) {
-
-        foreach ($array as $key => $value) {
-            if (is_null($value) || $value == "") {
-                unset($array[$key]);
-            }
-        }
-
-        return $array;
-    }
+    }    
 
     private function createExceptionMessage($result=array()) {
         
