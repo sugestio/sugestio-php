@@ -34,6 +34,7 @@ class SugestioItem {
 
     public $title;
     public $permalink;
+    public $thumbnail;
     
     public $description_short;
     public $description_full;    
@@ -77,6 +78,7 @@ class SugestioItem {
         
         $fields['title'] = $this->title;
         $fields['permalink'] = $this->permalink;
+        $fields['thumbnail'] = $this->thumbnail;
 
         $fields['description_short'] = $this->description_short;
         $fields['description_full'] = $this->description_full;
