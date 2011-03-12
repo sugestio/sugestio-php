@@ -188,7 +188,7 @@ class SugestioClient {
     }
     
     /**
-     * Gets the neighbours of the given user.
+     * Gets users that are similar to the given user.
      * 
      * @param string $userid the userid     
      * @exception Exception when the request failed due to clientside or serverside problems
@@ -217,7 +217,38 @@ class SugestioClient {
     	$method = 'DELETE';
     	$resource = '/consumptions/' . urlencode($consumptionid) . '.json';
     	
-    	$result = $this->execute($method, $resource, array());
+    	$result = $this->execute($method, $resource);
+    	
+    	return $result['code'];
+    }
+    
+    /**     
+     * Deletes all consumptions of the given user
+     * @param $userid the userid
+     * return int HTTP status code
+     */
+    public function deleteUserConsumptions($userid) {
+    	
+    	$method = 'DELETE';
+    	$resource = '/users/' . urlencode($userid) .  '/consumptions.json';
+    	
+    	$result = $this->execute($method, $resource);
+    	
+    	return $result['code'];
+    }
+    
+	/**
+     * Deletes all consumptions for the given user-item pair
+     * @param $userid the userid
+     * @param $itemid the itemid
+     * return int HTTP status code
+     */
+    public function deleteUserItemConsumptions($userid, $itemid) {
+    	
+    	$method = 'DELETE';
+    	$resource = '/users/' . urlencode($userid) .  '/consumptions/' . urlencode($itemid) . '.json';
+    	
+    	$result = $this->execute($method, $resource);
     	
     	return $result['code'];
     }
@@ -232,7 +263,7 @@ class SugestioClient {
     	$method = 'DELETE';
     	$resource = '/users/' . urlencode($userid) . '.json';
     	
-    	$result = $this->execute($method, $resource, array());
+    	$result = $this->execute($method, $resource);
     	
     	return $result['code'];
     }
@@ -247,7 +278,7 @@ class SugestioClient {
     	$method = 'DELETE';
     	$resource = '/items/' . urlencode($itemid) . '.json';
     	
-    	$result = $this->execute($method, $resource, array());
+    	$result = $this->execute($method, $resource);
     	
     	return $result['code'];
     }
