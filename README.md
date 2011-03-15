@@ -1,7 +1,7 @@
 # Overview
 
 This is a PHP library for interfacing with the [Sugestio](http://www.sugestio.com) 
-recommendation service. Data is submitted as POST variables. The library uses 
+recommendation service. Data is submitted as JSON data. The library uses 
 [oauth-php](http://code.google.com/p/oauth-php/) to create the OAuth-signed requests. 
 Our Drupal and Magento modules are built on top of this generic library.
 
@@ -36,9 +36,12 @@ The following [API](http://www.sugestio.com/documentation) features are implemen
 * get personalized recommendations for a given user
 * get items that are similar to a given item
 * get users that are similar to a given user
-* submit user activity (consumptions): clicks, purchases, ratings, ...
-* submit item metadata: description, location, tags, categories, ...  	
-* submit user metadata: gender, location, birthday, ...
+* (bulk) submit user activity (consumptions): clicks, purchases, ratings, ...
+* (bulk) submit item metadata: description, location, tags, categories, ...  	
+* (bulk) submit user metadata: gender, location, birthday, ...
+* delete consumptions
+* delete item metadata
+* delete user metadata
 * get performance data (analytics): precision, recall, ...
 
 ### Requirements
@@ -52,7 +55,7 @@ This distribution includes a slightly modified copy of
 [oauth-php](http://code.google.com/p/oauth-php/):
 
 * OAuthRequester::doRequest does not throw an OAuthException2 on response codes >= 400
-* Workaround for Issue #66
+* Workaround for [Issue #66](http://code.google.com/p/oauth-php/issues/detail?id=66)
 
 # Quick start
 
@@ -67,6 +70,15 @@ This distribution includes a slightly modified copy of
 	$consumption = new SugestioConsumption('X', 'Y'); // userid, itemid
 	$client->addConsumption($consumption);
 	
+	// submit consumptions in bulk
+	$consumption1 = new SugestioConsumption('X', 'Y');
+	$consumption2 = new SugestioConsumption('X', 'Z');
+	$consumptions = array($consumption1, $consumption2);	
+	$client->addConsumptions($consumptions);
+	
+	// delete all consumptions made by user X
+	$client->deleteUserConsumptions('X');
+	
 	// submit item metadata for item with ID Y
 	$item = new SugestioItem('Y');
 	$item->title = 'Item Y';
@@ -74,20 +86,20 @@ This distribution includes a slightly modified copy of
 	$client->addItem($item);
 	
 	// get recommendations for user 1
-	$client->getRecommendations(1);
+	$recommendations = $client->getRecommendations(1);
 	
 	// two best recommendations for user 1
-	$client->getRecommendations(1, array('limit'=>2));
+	$recommendations = $client->getRecommendations(1, array('limit'=>2));
 	
 	// only recommendations from category 'music'
-	$client->getRecommendations(1, array('category'=>'music'));	
+	$recommendations = $client->getRecommendations(1, array('category'=>'music'));	
 	
 	// only recommendations within 1 mile of this location
 	$queryParams = array(
 		'location_latlong'=>'40.688889,-74.045111',
 		'location_radius'=>'1',
 		'location_unit'=>'mi');	
-	$client->getRecommendations(1, $queryParams);
+	$recommendations = $client->getRecommendations(1, $queryParams);
 	
 	// combined filter
 	$queryParams = array(
@@ -96,7 +108,7 @@ This distribution includes a slightly modified copy of
 		'location_latlong'=>'40.688889,-74.045111',
 		'location_radius'=>'1',
 		'location_unit'=>'mi');	
-	$client->getRecommendations(1, $queryParams);
+	$recommendations = $client->getRecommendations(1, $queryParams);
 
 # Tutorial and sample code
 
