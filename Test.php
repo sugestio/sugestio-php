@@ -33,7 +33,6 @@ require_once dirname(__FILE__) . '/SugestioItem.php';
 require_once dirname(__FILE__) . '/SugestioConsumption.php';
 
 
-// test the sugestio client object
 $test = new SugestioClientTest();
 
 try {
@@ -101,7 +100,7 @@ class SugestioClientTest {
 		$item->category[] = 'Rock';
 		$item->creator[] = 'John Smith';
 		$item->creator[] = 'James Smith';
-		$item->segment = array('en-US', 'en-US');
+		$item->segment = array('en-US', 'en-UK');
 		$item->tag = array('tag1', 'tag2');
 
 		$result = $this->client->addItem($item);
@@ -137,7 +136,7 @@ class SugestioClientTest {
 
 	public function testGetSimilarItems() {
 
-		$similar = $this->client->getSimilarItems(11256);
+		$similar = $this->client->getSimilarItems(1);
 
 		echo '<pre>';
 		print_r($similar);
