@@ -182,7 +182,7 @@ class SugestioClient {
 	 * @exception Exception when the request failed due to clientside or serverside problems
 	 * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
 	 */
-	public function getSimilar($itemid, $options=array()) {
+	public function getSimilarItems($itemid, $options=array()) {
 		
 		$method = 'GET';
 		$resource = '/items/' . urlencode($itemid) . '/similar.json';
@@ -203,7 +203,7 @@ class SugestioClient {
 	 * @exception Exception when the request failed due to clientside or serverside problems
 	 * @return array (userid=>string, score=>double, certainty=>double, algorithm=>string)
 	 */
-	public function getNeighbours($userid) {
+	public function getSimilarUsers($userid) {
 		
 		$method = 'GET';
 		$resource = '/users/' . urlencode($userid) . '/similar.json';

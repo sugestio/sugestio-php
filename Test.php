@@ -42,10 +42,10 @@ try {
 	//$test->testAddItem();
 	//$test->testAddConsumption();
 	//$test->testGetRecommendations();
-	//$test->testGetSimilar();
+	//$test->testGetSimilarItems();
 	//$test->testDeleteRecommendation();
 	//$test->testGetAnalytics();
-	$test->testGetNeighbours();
+	//$test->testGetSimilarUsers();
 	//$test->testDeleteItem();
 	//$test->testDeleteUser();
 	
@@ -135,9 +135,9 @@ class SugestioClientTest {
 		echo '</pre>';
 	}
 
-	public function testGetSimilar() {
+	public function testGetSimilarItems() {
 
-		$similar = $this->client->getSimilar(11256);
+		$similar = $this->client->getSimilarItems(11256);
 
 		echo '<pre>';
 		print_r($similar);
@@ -163,9 +163,9 @@ class SugestioClientTest {
 		echo '</pre>';
 	}
 
-	public function testGetNeighbours() {
+	public function testGetSimilarUsers() {
 		
-		$result = $this->client->getNeighbours(1);
+		$result = $this->client->getSimilarUsers(1);
 
 		echo '<pre>';
 		print_r($result);

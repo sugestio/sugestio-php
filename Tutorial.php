@@ -39,8 +39,8 @@ try {
 	// Uncomment the feature that you want to try out
 
 	//getRecommendations();
-	//getSimilar();
-	//getNeighbours();
+	//getSimilarItems();
+	//getSimilarUsers();
 	
 	//addConsumption();
 	//addItem();
@@ -65,12 +65,12 @@ function getRecommendations() {
 	
 }
 
-function getSimilar() {
+function getSimilarItems() {
 
 	global $client;
 	
 	// get items that are similar to the item with id '1'
-	$recommendations = $client->getSimilar(1);
+	$recommendations = $client->getSimilarItems(1);
 	
 	echo '<pre>';
 	print_r($recommendations);
@@ -78,15 +78,15 @@ function getSimilar() {
 	
 }
 
-function getNeighbours() {
+function getSimilarUsers() {
 
 	global $client;
 	
 	// get users that are similar to the user with id '1'
-	$neighbours = $client->getNeighbours(1);
+	$recommendations = $client->getSimilarUsers(1);
 	
 	echo '<pre>';
-	print_r($neighbours);
+	print_r($recommendations);
 	echo '</pre>';
 	
 }

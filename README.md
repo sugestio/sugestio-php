@@ -229,7 +229,7 @@ to item 1:
 
 ### Code
 
-	$recommendations = $client->getSimilar(1);
+	$recommendations = $client->getSimilarItems(1);
 	
 	echo '<pre>';
 	print_r($recommendations);
@@ -297,7 +297,7 @@ could go like this:
 		echo "<h2>People who bought this product, also bought:</h2>";
 
 		global $client;
-		$recommendations = $client->getSimilar($_GET['id']);
+		$recommendations = $client->getSimilarItems($_GET['id']);
 
 		foreach ($recommendations as $recommendation) {
 			$title = $recommendation['item']['title'];
@@ -310,20 +310,20 @@ could go like this:
 ## Similar users
 
 Collaborative filtering algorithms find clusters of users with a similar consumption behaviour.
-These users are called _neighbours_. Run the following code to get the neighbours of user 1:
+These users are called _neighbours_. Run the following code to get the users that are similar to user 1:
 
 ### Code
 
-	$neighbours = $client->getNeighbours(1);
+	$recommendations = $client->getSimilarUsers(1);
 	
 	echo '<pre>';
-	print_r($neighbours);
+	print_r($recommendations);
 	echo '</pre>';
 	
 ### Response
 
 As usual, the client responds with an indexed array of associative arrays. 
-Each associative array represents a neighbour of user 1. These neighbours are again
+Each associative array represents a neighbour of user 1. These user recommendations are again
 sorted by descending score. In other words, the user that is the most similar to user 1, 
 is listed first.
 
