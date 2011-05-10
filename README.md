@@ -3,7 +3,7 @@
 This is a PHP library for interfacing with the [Sugestio](http://www.sugestio.com) 
 recommendation service. Data is submitted as JSON data. The library uses 
 [oauth-php](http://code.google.com/p/oauth-php/) to create the OAuth-signed requests. 
-Our Drupal and Magento modules are built on top of this generic library.
+Our Drupal and Magento reference implementations are built on top of this generic library.
 
 ## About Sugestio
 
@@ -59,6 +59,9 @@ This distribution includes a slightly modified copy of
 
 # Quick start
 
+This section provides a quick demonstration of the Sugestio client object. A more detailed, step-by-step 
+tutorial can be found further along this document.
+
 	require_once dirname(__FILE__) . '/SugestioClient.php';
 	require_once dirname(__FILE__) . '/SugestioUser.php';
 	require_once dirname(__FILE__) . '/SugestioItem.php';
@@ -73,7 +76,7 @@ This distribution includes a slightly modified copy of
 	// submit consumptions in bulk
 	$consumption1 = new SugestioConsumption('X', 'Y');
 	$consumption2 = new SugestioConsumption('X', 'Z');
-	$consumptions = array($consumption1, $consumption2);	
+	$consumptions = array($consumption1, $consumption2);
 	$client->addConsumptions($consumptions);
 	
 	// delete all consumptions made by user X
@@ -92,13 +95,13 @@ This distribution includes a slightly modified copy of
 	$recommendations = $client->getRecommendations(1, array('limit'=>2));
 	
 	// only recommendations from category 'music'
-	$recommendations = $client->getRecommendations(1, array('category'=>'music'));	
+	$recommendations = $client->getRecommendations(1, array('category'=>'music'));
 	
 	// only recommendations within 1 mile of this location
 	$queryParams = array(
 		'location_latlong'=>'40.688889,-74.045111',
 		'location_radius'=>'1',
-		'location_unit'=>'mi');	
+		'location_unit'=>'mi');
 	$recommendations = $client->getRecommendations(1, $queryParams);
 	
 	// combined filter
@@ -107,7 +110,7 @@ This distribution includes a slightly modified copy of
 		'category'=>'A,!B,C' // from category A or C, but not B
 		'location_latlong'=>'40.688889,-74.045111',
 		'location_radius'=>'1',
-		'location_unit'=>'mi');	
+		'location_unit'=>'mi');
 	$recommendations = $client->getRecommendations(1, $queryParams);
 
 # Tutorial and sample code
@@ -123,7 +126,7 @@ an existing e-commerce application.
 Access credentials can be statically configured through <code>Settings.php</code>:
 
 	$account = 'sandbox';
-	$secretkey = 'demo';	
+	$secretkey = 'demo';
 
 Alternatively, you can provide your account name and secret key when you 
 create an instance of the <code>SugestioClient</code> class. Constructor 
@@ -153,45 +156,47 @@ if the service has metadata for the item in question.
 
 	Array
 	(
-    	[0] => Array
-        	(
+		[0] => Array
+			(
 				[itemid] => 1
-            	[score] => 0.9
-            	[algorithm] => Sandbox
-            	[certainty] => 0.1
-            	[item] => Array
-                	(
-                    	[title] => Item 1
-                    	[permalink] => http://localhost/pages/1
-                    	[category] => Array
-                        	(
-                            	[0] => A
-                            	[1] => B
-                        	)
-                	)
+				[score] => 0.9
+				[algorithm] => Sandbox
+				[certainty] => 0.1
+				[item] => Array
+					(
+						[id] => 1
+						[title] => Item 1
+						[permalink] => http://localhost/pages/1
+						[category] => Array
+							(
+								[0] => A
+								[1] => B
+							)
+					)
 
-        	)
+			)
 
-    	[1] => Array
-        	(
-            	[itemid] => 2
-            	[score] => 0.8
-            	[algorithm] => Sandbox
-            	[certainty] => 0.1
-            	[item] => Array
-                	(
-                    	[title] => Item 2
-                    	[permalink] => http://localhost/pages/2
-                    	[category] => Array
-                        	(
-                            	[0] => B
-                            	[1] => C
-                        	)
-	                )
-        	)
-        	
-        	...
-        )
+		[1] => Array
+			(
+				[itemid] => 2
+				[score] => 0.8
+				[algorithm] => Sandbox
+				[certainty] => 0.1
+				[item] => Array
+					(
+						[id] => 2
+						[title] => Item 2
+						[permalink] => http://localhost/pages/2
+						[category] => Array
+							(
+								[0] => B
+								[1] => C
+							)
+					)
+			)
+			
+			...
+		)
 
 	
 ### Integration
@@ -208,10 +213,10 @@ recommendations.
 		global $client;
 		$recommendations = $client->getRecommendations($_SESSION['userid']);
 
-		foreach ($recommendations as $recommendation) {		
+		foreach ($recommendations as $recommendation) {
 			$title = $recommendation['item']['title'];
-			$link = "/productdetails.php?id=" . $recommendation['itemid'];							
-			echo "<a href=\"$link\">$title</a><br/>";		
+			$link = "/productdetails.php?id=" . $recommendation['itemid'];
+			echo "<a href=\"$link\">$title</a><br/>";
 		}
 		
 	}
@@ -239,41 +244,43 @@ is listed first.
 
 	Array
 	(
-	    [0] => Array
-	        (
-	            [itemid] => 2
-	            [score] => 0.8
-	            [certainty] => 0.5
-	            [algorithm] => Sandbox
-	            [item] => Array
-                	(
-                    	[title] => Item 2
-                    	[permalink] => http://localhost/pages/2
-                    	[category] => Array
-                        	(
-                            	[0] => B
-                            	[1] => C
-                        	)
-	                )
-	        )
+		[0] => Array
+			(
+				[itemid] => 2
+				[score] => 0.8
+				[certainty] => 0.5
+				[algorithm] => Sandbox
+				[item] => Array
+					(
+						[id] > 2
+						[title] => Item 2
+						[permalink] => http://localhost/pages/2
+						[category] => Array
+							(
+								[0] => B
+								[1] => C
+							)
+					)
+			)
 	
-	    [1] => Array
-	        (
-	            [itemid] => 3
-	            [score] => 0.7
-	            [certainty] => 0.5
-	            [algorithm] => Sandbox
-	            [item] => Array
-                	(
-                    	[title] => Item 3
-                    	[permalink] => http://localhost/pages/3
-                    	[category] => Array
-                        	(
-                            	[0] => C
-                            	[1] => D
-                        	)
-	                )
-	        )
+		[1] => Array
+			(
+				[itemid] => 3
+				[score] => 0.7
+				[certainty] => 0.5
+				[algorithm] => Sandbox
+				[item] => Array
+					(
+						[id] => 3
+						[title] => Item 3
+						[permalink] => http://localhost/pages/3
+						[category] => Array
+							(
+								[0] => C
+								[1] => D
+							)
+					)
+			)
 	
 		...
 	
@@ -292,10 +299,10 @@ could go like this:
 		global $client;
 		$recommendations = $client->getSimilar($_GET['id']);
 
-		foreach ($recommendations as $recommendation) {			
+		foreach ($recommendations as $recommendation) {
 			$title = $recommendation['item']['title'];
-			$link = "/productdetails.php?id=" . $recommendation['itemid'];							
-			echo "<a href=\"$link\">$title</a><br/>";						
+			$link = "/productdetails.php?id=" . $recommendation['itemid'];
+			echo "<a href=\"$link\">$title</a><br/>";
 		}
 		
 	}
@@ -322,21 +329,21 @@ is listed first.
 
 	Array
 	(
-	    [0] => Array
-	        (
-	            [userid] => 2
-	            [score] => 0.9
-	            [certainty] => 0.5
-	            [algorithm] => Sandbox
-	        )
+		[0] => Array
+			(
+				[userid] => 2
+				[score] => 0.9
+				[certainty] => 0.5
+				[algorithm] => Sandbox
+			)
 	
-	    [1] => Array
-	        (
-	            [userid] => 3
-	            [score] => 0.8
-	            [certainty] => 0.5
-	            [algorithm] => Sandbox
-	        )
+		[1] => Array
+			(
+				[userid] => 3
+				[score] => 0.8
+				[certainty] => 0.5
+				[algorithm] => Sandbox
+			)
 	
 		...
 	
@@ -372,7 +379,7 @@ date.
 
 	$consumption = new SugestioConsumption(1, 'A'); // userid, itemid
 	$consumption->type = 'PURCHASE';
-	$consumption->date = 'NOW';	
+	$consumption->date = 'NOW';
 	$result = $client->addConsumption($consumption);
 	
 	echo "addConsumption response code: $result";
@@ -440,7 +447,7 @@ a new consumption:
 		foreach ($basket->getProducts() as $product) {			
 			$consumption = new Consumption($customer['id'], $product['id']);
 			$consumption->date = 'NOW';
-			$consumption->type = 'PURCHASE';			
+			$consumption->type = 'PURCHASE';
 			$client->addConsumption($consumption);
 		}		
 	}
@@ -479,7 +486,7 @@ values to various attributes, both scalar and non-scalar.
 	$item->tag = array('tag1', 'tag2');
 	$item->category = array('category1', 'category2');
 	$item->creator = array('artist1');	
-	$item->location_latlong = '40.446195,-79.948862';	
+	$item->location_latlong = '40.446195,-79.948862';
 	$result = $client->addItem($item);
 	
 	echo "addItem response code: $result";
@@ -510,8 +517,8 @@ a unique id for this product, we can submit metadata to the recommendation servi
 
 	function createProduct($productInfo) {
 
-		// existing application logic		
-		// ...		
+		// existing application logic
+		// ...
 		$newProductId = $db->add($productInfo);
 	
 		// a new row has been added to our Product table
@@ -520,10 +527,10 @@ a unique id for this product, we can submit metadata to the recommendation servi
 		global $client;
 		
 		$item = new SugestioItem($newProductId);
-		$item->title = $productInfo['name'];		
+		$item->title = $productInfo['name'];
 		$item->tag = $productInfo['tag'];
 		$item->category = $productInfo['category'];
-		$client->addItem($item);		
+		$client->addItem($item);
 	}
 
 ## Submit user metadata
@@ -566,8 +573,7 @@ The example above will generate the following output:
 
 	addUser response code: 202
 	
-This indicates that the user submission was well-formed and that it was succesfully 
-processed by the Sugestio service.
+This indicates that the user submission was well-formed and that it was succesfully processed by the Sugestio service.
 
 ### Integration
 
@@ -578,8 +584,8 @@ the recommendation service:
 
 	function createCustomer($customerInfo) {
 
-		// existing application logic		
-		// ...		
+		// existing application logic
+		// ...
 		$newCustomerId = $db->add($customerInfo);
 	
 		// a new row has been added to our User table
@@ -590,7 +596,7 @@ the recommendation service:
 		$user = new SugestioUser($newCustomerId);
 		$user->gender = $customerInfo['gender'];
 		$user->birthday = $customerInfo['birthday'];
-		$client->addUser($user);		
+		$client->addUser($user);
 	}
 
 ## Analytics
@@ -617,42 +623,35 @@ represents a single analytics report. For brevity, only partial output is shown 
 
 	Array
 	(
-	    [0] => Array
-	        (	            
-	            [evaluation_F1] => 0.03335305219865348
-	            [evaluation_NumRecommendations] => 86092.0
-	            [evaluation_NumRelevantItems] => 20405.0
-	            [evaluation_NumRelevantRecommendations] => 1776.0
-	            [evaluation_Precision] => 0.020629094457092413
-	            [evaluation_Recall] => 0.08703749081107572	            
-	            [rec_DefaultRecommenderClass] => none
-	            [rec_MainRecommenderClass] => UserBasedCF
-	            [rec_MinConsumptionsForItems] => 1
-	            [rec_MinConsumptionsForUsers] => 1
-	            [rec_MinSimilarityToSave] => 0.01
-	            [rec_numOfRecommendationsPerUser] => 50
-	            [sparsity_AvgNumConsumptionsPerItemInTestSet] => 2.1896126193797616
-	            [sparsity_AvgNumConsumptionsPerItemInTrainingSet] => 10.652657695622118
-	            [sparsity_AvgNumConsumptionsPerItemInTrainingSetForTestItems] => 82.1555960940015
-	            [sparsity_AvgNumConsumptionsPerUserInTestSet] => 11.84959349593496
-	            [sparsity_AvgNumConsumptionsPerUserInTrainingSet] => 14.301824423113597
-	            [sparsity_AvgNumConsumptionsPerUserInTrainingSetForTestUsers] => 51.87688734030198
-	            [sparsity_NumConsumptionsInTestSet] => 20405
-	            [sparsity_NumConsumptionsInTrainingSet] => 1124910
-	            [sparsity_NumItemsInTestSet] => 9319
-	            [sparsity_NumItemsInTrainingSet] => 105599
-	            [sparsity_NumUserInTrainingSet] => 78655
-	            [sparsity_NumUsersInTestSet] => 1722
-	            ...
-	        )
-	
-	    [1] => Array
-	        (
-	            ...
-	        )
-	        
-		...
-
+		[0] => Array
+			(
+				[id] => f4fc18fa-3c7a-4daf-8807-01e4235d78ad
+				[evaluation_F1] => 0.0206286837
+				[evaluation_Precision] => 0.0257037944
+				[evaluation_Recall] => 0.0172272354
+				[evaluation_Recommendations] => 4085
+				[evaluation_RelevantRecommendations] => 105
+				// ...
+				[sparsity_AvgConsumptionsPerItemInTestSet] => 1.6850981476
+				[sparsity_AvgConsumptionsPerUserInTestSet] => 7.4602203182
+				[sparsity_ConsumptionsInTrainingSet] => 159803
+				[sparsity_ItemsInTestSet] => 3617
+				[sparsity_ItemsInTrainingSet] => 29748
+				[sparsity_PercTrainingUsersConsumingInTestSet] => 0.0459375879
+				// ...
+				[evaluation_TestSetFrom] => 2010-07-03T00:00:00
+				[evaluation_TestSetUntil] => 2010-08-03T00:00:00
+				[evaluation_TrainingSetFrom] => 2009-07-31T00:00
+				[evaluation_TrainingSetUntil] => 2010-07-03T00:00:00
+				// ...
+			)
+			
+		[1] => Array
+			(
+				//...
+			)
+			
+		// ...
 	)
 	
 
