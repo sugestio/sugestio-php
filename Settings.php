@@ -2,7 +2,7 @@
 
 /**
  * Static configuration of service access credentials.
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2010 Sugestio
@@ -28,20 +28,20 @@
 
 class Settings {
 
-    /**
-     * The URL of the Sugestio webservice
-     */
-    public $base_url = 'http://api.sugestio.com';
+	/**
+	 * The URL of the Sugestio webservice
+	 */
+	public $base_url = 'http://api.sugestio.com';
 
-    /**
-     *  The account name of the project that wishes to communicate with the webservice
-     */
-    public $account = 'sandbox';
+	/**
+	 *  The account name of the project that wishes to communicate with the webservice
+	 */
+	public $account = 'sandbox';
 
-    /**
-     * The secret key that will be used to authenticate the communication with the webservice
-     */
-    public $secretkey = 'demo';
+	/**
+	 * The secret key that will be used to authenticate the communication with the webservice
+	 */
+	public $secretkey = 'demo';
 
 }
 

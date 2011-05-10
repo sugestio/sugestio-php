@@ -1,9 +1,11 @@
 <?php
 
 /**
+ * THIS CLASS IS DEPRECATED
+ * 
  * A wrapper class for the SugestioClient. Provides backwards compatibility for applications 
  * that use the old RaaS PHP library. New projects should use SugestioClient directly.
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2010 Sugestio
@@ -37,229 +39,242 @@ require_once dirname(__FILE__) . '/SugestioItem.php';
  */
 class Controller {
 
-    private $client;
+	private $client;
 
-    /**
-     * Creates a new instance of the Controller wrapper.
-     * @deprecated
-     */
-    public function __construct($base_url=null, $account=null, $secretkey=null, $security=null) {
-        $this->client = new SugestioClient($account, $secretkey, $base_url);
-    }
+	/**
+	 * 
+	 * Creates a new instance of the Controller wrapper.
+	 * 
+	 * @deprecated
+	 * @param string $base_url URL of the API
+	 * @param string $account account key
+	 * @param string $secretkey secret key
+	 * @param boolean $security sign requests 
+	 */
+	public function __construct($base_url=null, $account=null, $secretkey=null, $security=null) {
+		$this->client = new SugestioClient($account, $secretkey, $base_url);
+	}
 
+	/**
+	 * 
+	 * Called when a user registers on the client website.
+	 * Responses:
+	 * 202 Accepted: Job was put on the queue and will be processed
+	 * 400 Bad Request: Required arguments are missing or malformed
+	 * 401 Unauthorized: Missing or incorrect account credentials 
+	 * 500 Internal Server Error: Serverside problem
+	 * 
+	 * @param string $id User ID on the client website (required)
+	 * @param string $location_simple country, ...
+	 * @param string $location_latlong GPS coordinates (latitude, longitude)
+	 * @param string $gender 'M' or 'F'
+	 * @param string $birthday expressed as a UTC timestamp
+	 * @return int response HTTP response code
+	 */
+	public function addUser($id, $location_simple, $location_latlong, $gender, $birthday) {
 
-    /*
-        Called when a user registers on the client website.
+		$user = new SugestioUser($id);
 
-        Arguments:
+		$user->gender = $gender;
+		$user->birthday = $birthday;
+		$user->location_simple = $location_simple;
+		$user->location_latlong = $location_latlong;
 
-        id: User ID on the client website (required)
-        location_simple: country, ...
-        location_latlong: GPS coordinates (latitude, longitude)
-        gender: 'm' or 'f'
-        birthday: expressed as a UTC timestamp
+		$result = $this->client->addUser($user);
 
-        Response:
+		return $result;
+	}
 
-        202 Accepted: Job was put on the queue and will be processed
-        400 Bad Request: Required arguments are missing or malformed
-        401 Unauthorized: Missing or incorrect account credentials        
-        406 Not Acceptable
-        500 Internal Server Error
-    */
-    public function addUser($id, $location_simple, $location_latlong, $gender, $birthday) {
+	/**
+	 * 
+	 * Called when an item is added to the client website.
+	 * Responses:
+	 * 202 Accepted: Job was put on the queue and will be processed
+	 * 400 Bad Request: Required arguments are missing or malformed
+	 * 401 Unauthorized: Missing or incorrect account credentials 
+	 * 500 Internal Server Error: Serverside problem
+	 *
+	 * @param string $id Item ID on the client website (required)
+	 * @param string $from indicating from when this item may be recommended. Ex: 2004-09-16T17:55:43.54Z
+	 * @param string $until indicating until when this item may be recommended. Ex: 2004-09-16T17:55:43.54Z
+	 * @param string $location_simple country, venue, ...
+	 * @param string $location_latlong GPS coordinates. (latitude, longitude)
+	 * @param array $creator Artist, manufacturer, uploader, ...
+	 * @param array $tag 
+	 * @param array $category 
+	 * @return int response HTTP response code
+	 */
+	public function addItem($id, $from, $until, $location_simple, $location_latlong, $creator=array(), $tag=array(), $category=array()) {
 
-        $user = new SugestioUser($id);
+		$item = new SugestioItem($id);
 
-        $user->gender = $gender;
-        $user->birthday = $birthday;
-        $user->location_simple = $location_simple;
-        $user->location_latlong = $location_latlong;
+		$item->from = $from;
+		$item->until = $until;
+		$item->location_simple = $location_simple;
+		$item->location_latlong = $location_latlong;
+		$item->category = $category; // category, creator, segment and tag are arrays
+		$item->creator = $creator;
+		$item->tag = $tag;
 
-        $result = $this->client->addUser($user);
+		$result = $this->client->addItem($item);
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /*
-        Called when an item is added to the client website.
+	
+	/**
+	 * 
+	 * Called when a user consumes an item.
+	 * Responses:
+	 * 202 Accepted: Job was put on the queue and will be processed
+	 * 400 Bad Request: Required arguments are missing or malformed
+	 * 401 Unauthorized: Missing or incorrect account credentials 
+	 * 500 Internal Server Error: Serverside problem
+	 * 
+	 * @param string $userid ID of the user that consumed the item (required)
+	 * @param string $itemid ID of the item that was consumed (required)
+	 * @param string $type The type of consumption (i.e. VIEW, BASKET, RATING)
+	 * @param string $detail More information about the consumption
+	 * @param string $date The moment of consumption expressed as a UTC timestamp
+	 * @param string $location_simple Location where the item is consumed (home, office, ...)
+	 * @param string $location_latlong GPS coordinates (latitude, longitude)
+	 * @param array $extra associative array with additional parameters
+	 * @return int response HTTP response code
+	 */
+	public function addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra=array()) {
 
-        id: Item ID on the client website (required)
-        from: UTC timestamp indicating from when this item may be recommended. Ex: 2004-09-16T17:55:43.54Z
-        until: UTC timestamp indicating until when this item may be recommended. Ex: 2004-09-16T17:55:43.54Z
-        location_simple: country, venue, ...
-        location_latlong: GPS coordinates. (latitude, longitude)
-        creator (array): Artist, manufacturer, uploader, ...
-        tag (array)
-        category (array)
+		$c = new SugestioConsumption($userid, $itemid); // userid, itemid
 
-        Response
+		$c->date = $date;
+		$c->type = $type;
+		$c->detail = $detail;
+		$c->location_simple = $location_simple;
+		$c->location_latlong = $location_latlong;
+		$c->extra = $extra;
 
-        202 Accepted: Job was put on the queue and will be processed
-        400 Bad Request: Required arguments are missing or malformed
-        401 Unauthorized: Missing or incorrect account credentials
-        406 Not Acceptable
-        500 Internal Server Error
-    */
-    public function addItem($id, $from, $until, $location_simple, $location_latlong, $creator=array(), $tag=array(), $category=array()) {
+		$result = $this->client->addConsumption($c);
 
-        $item = new SugestioItem($id);
+		return $result;
+	}
 
-        $item->from = $from;
-        $item->until = $until;
-        $item->location_simple = $location_simple;
-        $item->location_latlong = $location_latlong;
-        $item->category = $category; // category, creator, segment and tag are arrays
-        $item->creator = $creator;
-        $item->tag = $tag;
+	/**
+	 * 
+	 * Called when a user consumes an item.
+	 * Responses:
+	 * 202 Accepted: Job was put on the queue and will be processed
+	 * 400 Bad Request: Required arguments are missing or malformed
+	 * 401 Unauthorized: Missing or incorrect account credentials 
+	 * 500 Internal Server Error: Serverside problem
+	 * 
+	 * @param string $userid ID of the user that consumed the item (required)
+	 * @param string $itemid ID of the item that was consumed (required)
+	 * @param string $type The type of consumption (i.e. VIEW, BASKET, RATING)
+	 * @param string $detail More information about the consumption
+	 * @param string $date The moment of consumption expressed as a UTC timestamp
+	 * @param string $location_simple Location where the item is consumed (home, office, ...)
+	 * @param string $location_latlong GPS coordinates (latitude, longitude)
+	 * @param array $extra associative array with additional parameters
+	 * @return int response HTTP response code
+	 */
+	public function addConsumptionExtra($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra) {
+			return $this->addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra);
+	}
 
-        $result = $this->client->addItem($item);
+	/**
+	 * 
+	 * Returns recommendations for the given user. Recommendations consist of an Item ID and a score. 
+	 * Recommendations are sorted by descending score.
+	 * @param string $userid ID of the user (required)
+	 * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
+	 */
+	public function getRecommendations($userid) {
 
-        return $result;
-    }
+		try {
+			$recommendations = $this->client->getRecommendations($userid);
+		} catch (Exception $e) {
+			$recommendations = array();
+		}
 
-    /*
-        Arguments
+		return $recommendations;
+	}
 
-        userid: ID of the user that consumed the item (required)
-        itemid: ID of the item that was consumed (required)
-        type: The type of consumption (i.e. VIEW, BASKET, RATING)
-        detail: More information about the consumption
-        date: The moment of consumption expressed as a UTC timestamp
-        location_simple: Location where the item is consumed (home, office, ...)
-        location_latlong: GPS coordinates (latitude, longitude)
+	/**
+	 * 
+	 * A (negative) consumption is created so that the item won't return the next time recommendations are calculated.
+	 * Responses:
+	 * 202 Accepted: Job was put on the queue and will be processed
+	 * 400 Bad Request: Required arguments are missing or malformed
+	 * 401 Unauthorized: Missing or incorrect account credentials 
+	 * 500 Internal Server Error: Serverside problem
+	 * 
+	 * @param string $userid
+	 * @param string $itemId
+	 * @return int HTTP response code
+	 */
+	public function deleteRecommendation($userid, $itemId) {
+		return $this->client->deleteRecommendation($userid, $itemId);
+	}
 
-        Response
+	/**
+	 * 
+	 * Returns similar items for the given item. Recommendations consist of an Item ID and a score. 
+	 * Recommendations are sorted by descending score.
+	 * 
+	 * @param string $itemid the item ID
+	 * @return array (itemid=>string, score=>double, certainty=>double, algorithm=>string)
+	 */
+	public function getSimilar($itemid) {
 
-        202 Accepted: Job was put on the queue and will be processed
-        400 Bad Request: Required arguments are missing or malformed
-        401 Unauthorized: Missing or incorrect account credentials
-        406 Not Acceptable
-        500 Internal Server Error
-    */
-    public function addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra=array()) {
+		try {
+			$similar = $this->client->getSimilar($itemid);
+		} catch (Exception $e) {
+			$similar = array();
+		}
 
-        $c = new SugestioConsumption($userid, $itemid); // userid, itemid
+		return $similar;
+	}
 
-        $c->date = $date;
-        $c->type = $type;
-        $c->detail = $detail;
-        $c->location_simple = $location_simple;
-        $c->location_latlong = $location_latlong;
-        $c->extra = $extra;
+	public function getRecommendationsXml($userid) {
+		return $this->getRecommendations($userid);
+	}
 
-        $result = $this->client->addConsumption($c);
-
-        return $result;
-    }
-
-    /*
-     * Extended addConsumption method which allows to pass additional parameters through the
-     * $extra option. This field is expected to be an array
-     */
-    public function addConsumptionExtra($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra) {
-            return $this->addConsumption($userid, $itemid, $type, $detail, $date, $location_simple, $location_latlong, $extra);
-    }
-
-    /*
-        Returns recommendations for the given user. Recommendations consist of an Item ID and a score.
-        Recommendations are sorted by descending score.
-
-        Arguments
-
-        userid: ID of the user who's recommendations must be fetched (required)
-    */
-    public function getRecommendations($userid) {
-
-        try {
-            $recommendations = $this->client->getRecommendations($userid);
-        } catch (Exception $e) {
-            $recommendations = array();
-        }
-
-        return $recommendations;
-    }
-
-    /*
-         A (negative) consumption is created so that the item won't return the next time recommendations are calculated.
-
-         Arguments
-
-         userid: ID of the user that consumed the item (required)
-         itemid: ID of the item that was consumed (required)
-
-         Response
-
-        202 Accepted: Job was put on the queue and will be processed
-        400 Bad Request: Required arguments are missing or malformed
-        401 Unauthorized: Missing or incorrect account credentials
-        406 Not Acceptable
-        500 Internal Server Error
-    */
-    public function deleteRecommendation($userid, $itemId) {
-        return $this->client->deleteRecommendation($userid, $itemId);
-    }
-
-    /*
-     Returns similar items for the given item. Recommendations consist of an Item ID and a score.
-     Recommendations are sorted by descending score.
-
-     Arguments
-
-     userid: ID of the item whose similar items must be fetched (required)
-    */
-    public function getSimilar($itemid) {
-
-        try {
-            $similar = $this->client->getSimilar($itemid);
-        } catch (Exception $e) {
-            $similar = array();
-        }
-
-        return $similar;
-    }
-
-    public function getRecommendationsXml($userid) {
-        return $this->getRecommendations($userid);
-    }
-
-    public function getRecommendationsJson($userid) {
-    	
-    	$recs = $this->getRecommendations($userid); 
-    	
-    	for ($i=0; $i<count($recs); $i++) {			
+	public function getRecommendationsJson($userid) {
+		
+		$recs = $this->getRecommendations($userid); 
+		
+		for ($i=0; $i<count($recs); $i++) {
 			$recs[$i]['itemid'] = array($recs[$i]['itemid']);
 			$recs[$i]['score'] = array($recs[$i]['score']);
 			$recs[$i]['algorithm'] = array($recs[$i]['algorithm']);
 		}
-    	
-        return json_encode($recs);
-    }
+		
+		return json_encode($recs);
+	}
 
-    public function getRecommendationsCsv($userid) {
-        return $this->getRecommendations($userid);
-    }
+	public function getRecommendationsCsv($userid) {
+		return $this->getRecommendations($userid);
+	}
 
-    public function getSimilarXml($itemid) {
-        return $this->getSimilar($itemid);
-    }
+	public function getSimilarXml($itemid) {
+		return $this->getSimilar($itemid);
+	}
 
-    public function getSimilarJson($itemid) {
-        
-    	$recs = $this->getSimilar($itemid);
-    	
-    	for ($i=0; $i<count($recs); $i++) {			
+	public function getSimilarJson($itemid) {
+		
+		$recs = $this->getSimilar($itemid);
+		
+		for ($i=0; $i<count($recs); $i++) {
 			$recs[$i]['itemid'] = array($recs[$i]['itemid']);
 			$recs[$i]['score'] = array($recs[$i]['score']);
 			$recs[$i]['algorithm'] = array($recs[$i]['algorithm']);
 		}
-    	
-        return json_encode($recs);    	
-    }
+		
+		return json_encode($recs);
+	}
 
-    public function getSimilarCsv($itemid) {
-        return $this->getSimilar($itemid);
-    }
+	public function getSimilarCsv($itemid) {
+		return $this->getSimilar($itemid);
+	}
 
 }
 

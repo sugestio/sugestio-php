@@ -2,7 +2,7 @@
 
 /**
  * Sample code from the online tutorial.
- *  
+ *
  * The MIT License
  *
  * Copyright (c) 2010 Sugestio
@@ -47,9 +47,9 @@ try {
 	//addUser();
 	
 	//getAnalytics();
-    
+	
 } catch (Exception $e) {
-    echo 'Caught exception: ',  $e->getMessage(), "\n";
+	echo 'Caught exception: ', $e->getMessage(), "\n";
 }
 
 function getRecommendations() {
