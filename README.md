@@ -626,11 +626,16 @@ represents a single analytics report. For brevity, only partial output is shown 
 		[0] => Array
 			(
 				[id] => f4fc18fa-3c7a-4daf-8807-01e4235d78ad
+				// ...
 				[evaluation_F1] => 0.0206286837
 				[evaluation_Precision] => 0.0257037944
 				[evaluation_Recall] => 0.0172272354
 				[evaluation_Recommendations] => 4085
 				[evaluation_RelevantRecommendations] => 105
+				[evaluation_TestSetFrom] => 2010-07-03T00:00:00
+				[evaluation_TestSetUntil] => 2010-08-03T00:00:00
+				[evaluation_TrainingSetFrom] => 2009-07-31T00:00
+				[evaluation_TrainingSetUntil] => 2010-07-03T00:00:00
 				// ...
 				[sparsity_AvgConsumptionsPerItemInTestSet] => 1.6850981476
 				[sparsity_AvgConsumptionsPerUserInTestSet] => 7.4602203182
@@ -638,11 +643,6 @@ represents a single analytics report. For brevity, only partial output is shown 
 				[sparsity_ItemsInTestSet] => 3617
 				[sparsity_ItemsInTrainingSet] => 29748
 				[sparsity_PercTrainingUsersConsumingInTestSet] => 0.0459375879
-				// ...
-				[evaluation_TestSetFrom] => 2010-07-03T00:00:00
-				[evaluation_TestSetUntil] => 2010-08-03T00:00:00
-				[evaluation_TrainingSetFrom] => 2009-07-31T00:00
-				[evaluation_TrainingSetUntil] => 2010-07-03T00:00:00
 				// ...
 			)
 			
